@@ -1,0 +1,60 @@
+.iviewer_common {
+    position:absolute;
+    bottom:10px;
+    /*border: 1px  solid #000;*/
+    height: 30px;
+    z-index: 5000;
+}
+
+.invisible 
+{
+    display: none;
+}
+
+.iviewer_cursor {
+    /*cursor: url(img/hand.cur) 6 8, pointer;*/
+}
+
+.iviewer_drag_cursor {
+    /*cursor: url(img/grab.cur) 6 8, pointer;*/
+}
+
+.iviewer_button {
+    width: 30px;
+    cursor: pointer;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+.iviewer_zoom_in 
+{
+    left: 15px;
+    background: url(../images/plus.png) no-repeat;
+}
+
+.iviewer_zoom_out 
+{
+    left: 52px;
+    background: url(../images/minus.png) no-repeat;
+}
+
+.iviewer_zoom_zero {
+    left: 166px;
+    /*background: url(../images/iviewer.zoom_zero.gif);*/
+}
+
+.iviewer_zoom_fit 
+{
+    display: none;
+    left: 166px;
+    background: url(../images/fit.png);
+}
+
+.iviewer_zoom_status {
+    left: 272px;
+    font: 1em/28px Sans;
+    color: #000;
+    background-color: #fff;
+    text-align: center;
+    width: 60px;
+}

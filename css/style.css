@@ -1,0 +1,126 @@
+/*
+ * Copyright 2010-2011 Research In Motion Limited.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.centered
+{
+    text-align: center;
+}
+
+.full-width
+{
+    width: 100%;
+}
+
+.float-right
+{
+    float: right;
+}
+
+#content-frame
+{
+    overflow: auto;
+}
+
+.content
+{
+    display: none;
+}
+
+.centered
+{
+    text-align: center;
+    width: 100%;
+}
+
+.separator
+{
+    height: 1px;
+    background-color: black;
+}
+
+.message-system
+{
+    color: gray;
+    text-align: center;
+}
+
+.message-debug
+{
+    color: green;
+    text-align: center;
+}
+
+.correct-hover {
+    background: url('../images/correct.png') top center no-repeat;
+}
+
+.wrong-hover {
+    background: url('../images/wrong.png') top center no-repeat;
+}
+
+.correct-hover,
+.wrong-hover {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 1001;
+    display: block;
+}
+
+#game-time-bar > span
+{
+    width: 200px;
+    height: 10px;
+    top: 1px;
+    display: inline-block;
+    margin-right: -3px;
+}
+
+#game-time-bar-red
+{
+    background-color: red;
+}
+#game-time-bar-green
+{
+    background-color: green;
+}
+#game-time-bar-yellow
+{
+    background-color: yellow;
+}
+
+.game-time-bar 
+{
+    height: 15px;
+    margin: 5px 10px;
+    
+    background: #d40000; /* Old browsers */
+    background: -moz-linear-gradient(left,  #d40000 0%, #ff9731 47%, #30ff35 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%,#d40000), color-stop(47%,#ff9731), color-stop(100%,#30ff35)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(left,  #d40000 0%,#ff9731 47%,#30ff35 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(left,  #d40000 0%,#ff9731 47%,#30ff35 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(left,  #d40000 0%,#ff9731 47%,#30ff35 100%); /* IE10+ */
+    background: linear-gradient(left,  #d40000 0%,#ff9731 47%,#30ff35 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d40000', endColorstr='#30ff35',GradientType=1 ); /* IE6-9 */
+
+}
+
+#game-time-bar 
+{
+    overflow: hidden;
+}

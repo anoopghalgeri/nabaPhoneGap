@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugins> 
+  <plugin name="Notification"   value="com.phonegap.notification.Notification"/>
+  <plugin name="File"           value="com.phonegap.file.FileManager"/>
+  <plugin name="FileTransfer"   value="com.phonegap.http.FileTransfer"/>
+  <plugin name="ChildBrowser"   value="com.phonegap.plugins.childbrowser.ChildBrowser"/>
+  <plugin name="PluginResult"   value="com.phonegap.api.PluginResult"/>
+</plugins>

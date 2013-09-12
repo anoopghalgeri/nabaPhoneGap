@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Settings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <AppName>Naba App Detail Demo</AppName>
+  <ContentDownloadLink>https://smartstudy.s3.amazonaws.com/Naba%20App%20Detail%20Demo_Trial_991.zip?AWSAccessKeyId=AKIAIZPRZH745AQKNR5Q&amp;Expires=1409929877&amp;Signature=APsTnjx716UXIlFLEB8y8Dmz10k%3D</ContentDownloadLink>
+  <FileCount>2</FileCount>
+  <DownloadSize>168036</DownloadSize>
+  <Files>
+    <file>C306_PIC_0020.jpg</file>
+    <file>C306_ILL_0001.png</file>
+  </Files>
+</Settings>

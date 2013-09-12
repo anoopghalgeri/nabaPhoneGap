@@ -1,0 +1,1091 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Smart study</title>
+    <!--<meta name="viewport" content="width=device-width, target-densitydpi=device-dpi, user-scalable=no, initial-scale=1.0" width=device-width, height=device-height, />-->
+    <meta name="viewport" content="width=device-width, height=device-height, user-scalable=no, initial-scale=1.0" />
+
+    <!-- Common scripts/css -->
+    <link rel="stylesheet" href="css/smartStudy.css" />
+    <link rel="stylesheet" href="css/bb-jquery.mobile-1.0.1.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/jquery.iviewer.css" />
+    <link rel="stylesheet" href="css/jquery.mobile.simpledialog.css" /> 
+
+    <script type="text/javascript" src="scripts/jquery-1.6.4.min.js"></script>
+    <script type="text/javascript" src="scripts/code.js"></script>
+
+    <script type="text/javascript">
+        $(document).bind("mobileinit", function () {
+            $.mobile.defaultPageTransition = 'none';
+            $.mobile.ajaxEnabled = false;
+        });
+    </script>
+
+    <script type="text/javascript" src="scripts/jquery.mobile-1.0.1.js"></script>
+    <script type="text/javascript" src="phonegap-1.4.1.js"></script>
+    <script type="text/javascript" src="json2.js"></script>
+
+    <!--<script type="text/javascript" src="childbrowser.js"></script>-->
+    <script type="text/javascript" src="scripts/datacontent.js"></script>
+    <script type="text/javascript" src="scripts/connections.js"></script>
+    <script type="text/javascript" src="scripts/game.js"></script>
+    <script type="text/javascript" src="scripts/gameLobby.js"></script>
+    <script type="text/javascript" src="scripts/database.js"></script>
+    
+    <script type="text/javascript" src="scripts/jqueryui.js"></script>
+    <script type="text/javascript" src="scripts/jquery.mousewheel.min.js"></script>
+    <script type="text/javascript" src="scripts/jquery.iviewer.js"></script>
+    <!--<script type="text/javascript" src="facebook.js"></script>-->
+    <script type="text/javascript" src="scripts/awesomechart.js"></script>
+    <script type="text/javascript" src="scripts/jquery.mobile.simpledialog.js"></script>
+    
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=UnifrakturMaguntia" />
+	<link rel="stylesheet" href="scripts/mathscribe/jqmath-0.3.0.css" />
+	<script type="text/javascript" src="scripts/mathscribe/jqmath-etc-0.3.0.min.js"></script>
+	
+    <script type="text/javascript">
+	
+        var illustrPath = "";
+	    var currentGameOwner = null;
+		
+		
+		
+	    window.onorientationchange = function() {
+	        //IllPageBeforeShow();
+	        document.body.style.height = window.screen.height + "px";
+			$(".ui-header").width($(window).width());
+			$(".ui-footer").width($(window).width());
+	        $('#game-time-bar > div').css('width', window.screen.width - 10 + "px");
+
+	        var height = window.screen.height - 5 + "px";
+	        $("#panview-div").css('height', height);
+	        $("#panview-div")
+    	        .width($(window).width() - 10)
+    	        .height($(window).height() - 20)
+    	        .css({ position: 'relative', left: '5px', 'margin-top': '10px' });
+	    };
+
+	    $(function () {
+	        bbDatabase.termsData =
+	        /*[#TERMDATA]*/[{id:0,topicId:'AQA-C3-2012-Water_Naba'}
+,{id:1,topicId:'AQA-C3-2012-Water_Naba'}];/*[$TERMDATA]*/
+
+	        //document.body.style.height = window.screen.height + "px";
+	        //	        alert(window.innerHeight);
+	        document.body.style.height = window.innerHeight + "px";
+	        /*if (typeof blackberry !== "undefined" && blackberry !== null) {
+	            if (typeof blackberry.system.model !== "undefined"
+    	            && blackberry.system.model !== null) {
+	                if (blackberry.system.model == "9900" && parseInt(blackberry.system.softwareVersion) >= 7)
+	                    document.body.style.height = window.innerHeight + "px";
+	                else {
+	                    document.body.style.height = window.screen.height + "px";
+	                }
+	            }
+	        }*/
+
+	        $('#game-time-bar > div').css('width', window.screen.width - 10 + "px");
+
+	        //bbDatabase.checkIfDbExists();
+
+	        bbDatabase.subjectStyles =
+	        /*[#STYLEDATA]*/[{id:375,style:1}];/*[$STYLEDATA]*/
+
+	        $('#illustr-page').bind('pagebeforeshow', IllPageBeforeShow);
+
+	        $('#splash-screen-page').bind('pagebeforeshow', function (event) {
+	            bbDatabase.getProgressData();
+	        });
+
+	        $('#game-wrong-words').bind('pagebeforeshow', function (event) {
+	            bindBackBtnNavigateBack();
+	        });
+
+	        $('#descr-page').bind('pagebeforeshow', function (event) {
+	            bindBackBtnNavigateBack();
+	        });
+
+	        $('#game-score-screen').bind('pagebeforeshow', function (event) {
+	            bindBackBtnLeaveGame();
+	        });
+
+	        $('#splash-screen-page').bind('pagebeforeshow', function (event) {
+	            $('#splash-screen-page .ui-header').show();
+	            bindBackBtnNavigateBack();
+	        });
+
+	        $('#content-download-page').bind('pageshow', function (event) {
+	            bbDataContent.downloadContent();
+	        });
+
+	        $('#descr-page').bind('pageshow', function (event, ui) {
+	            //alert(window.screen.height + ' ' + $.mobile.getScreenHeight() + ' ' + document.body.style.height + ' ' + screen.availHeight + ' ' + window.innerHeight);
+				$("#item-descr").css({ 'height': 'auto' })
+	            var a = parseInt($("#item-descr").css("padding-top").replace("px", ""));
+	            var b = parseInt($("#item-descr").css("padding-bottom").replace("px", ""));
+	            var height = window.innerHeight - $("#descr-page-btns-container").height() - 42 - a - b - 1;
+				if (parseInt($("#item-descr-value").height()) > height)
+	                return;
+	            $("#item-descr").css({ 'height': height });
+	        });
+
+	        $('#picture-page').bind('pageshow', function (event) {
+	            resizePhoto();
+	        });
+
+	        $('#game-main-screen-page').bind('pageshow', function (event) {
+	            var w = Math.round(($('.game-screen-header').width() - $('#game-leader-qn').width()) / 2) - parseInt($("#game-mp-left").css("padding-left").replace("px", "")) - 20;
+	            $('#game-leader-name').css({ 'width': w });
+	        });
+
+	        /*$('#search-page').$('#search-page-G-L').$('#search-page-M-S').$('#search-page-T-Z').bind('pageshow', function (event) {
+	            $.mobile.hidePageLoadingMsg();
+	        });*/
+
+	        $('#search-page, #search-page-G-L, #search-page-M-S, #search-page-T-Z').bind('pagebeforeshow', function (event) {
+	            bindBackBtnShowMainScreen();
+	        });
+	    });
+
+	    function lobbyAvatarLoaded(o) {
+	        if ($(o).attr('src') != "images/avatar.png") {
+	            $(o).css({ 'margin-top': Math.round((90 - o.height) / 2) });
+	            $(o).css({ 'margin-left': Math.round((80 - o.width) / 2) });
+	        }
+        }
+
+	    function IllPageBeforeShow(event) {
+            $("#panview-div").remove();
+            var height = window.screen.height - 5 + "px";
+            $('<div id="panview-div" style="height:' + height + '"></div>').appendTo($("div#illustr-page>.dv-bg-shadow"));
+	        $("#panview-div")
+    	        .width($(window).width() - 10)
+    	        .height($(window).height() - 20)
+    	        .css({ position: 'relative', left: '5px', 'margin-top': '10px' })
+    	        .iviewer({
+    	            src: illustrPath,
+    	            initCallback: function() { var self = this; }
+    	        });
+        }
+        
+        function onLoad() 
+        {
+            document.addEventListener("deviceready", onDeviceReady, false);
+        }
+
+        function navigationBack() 
+        {
+            bbHandlers.backKeyDown(); 		
+        }
+
+        var bbHandlers = {};
+
+        bbHandlers.backKeyDown = function() {
+        };
+
+        function onExitCallback() {
+            cleanUp();
+            blackberry.app.exit();
+        }
+
+        function cleanUp() {
+            if (bbDatabase.termsData != null) {
+                bbDatabase.termsData.length = 0;
+                bbDatabase.termsData = null;
+            }
+            if (bbDatabase.subjectStyles != null) {
+                bbDatabase.subjectStyles.length = 0;
+                bbDatabase.subjectStyles = null;
+            }
+            if (bbGameLobby.usersData != null) {
+                bbGameLobby.usersData.length = 0;
+                bbGameLobby.usersData = null;
+            }
+            if (bbGame.questions != null) {
+                bbGame.questions.length = 0;
+                bbGame.questions = null;
+            }
+            if (bbGame.answers != null) {
+                bbGame.answers.length = 0;
+                bbGame.answers = null;
+            }
+            if (bbGame.skipped != null) {
+                bbGame.skipped.length = 0;
+                bbGame.skipped = null;
+            }
+            if (bbGame.mpScores != null) {
+                bbGame.mpScores.length = 0;
+                bbGame.mpScores = null;
+            }
+
+            if (bbSettings.FilesList != null) {
+                bbSettings.FilesList.length = 0;
+                bbSettings.FilesList = null;
+            }
+
+            if (bbDatabase.ids != null) {
+                bbDatabase.ids.length = 0;
+                bbDatabase.ids = null;
+            }
+
+            if (bbDatabase.questions != null) {
+                bbDatabase.questions.length = 0;
+                bbDatabase.questions = null;
+            }
+
+            if (bbDatabase.topics != null) {
+                bbDatabase.topics.length = 0;
+                bbDatabase.topics = null;
+            }
+
+            if (bbDatabase.subjects != null) {
+                bbDatabase.subjects.length = 0;
+                bbDatabase.subjects = null;
+            }
+
+            if (bbConnections.users != null) {
+                bbConnections.users.length = 0;
+                bbConnections.users = null;
+            }
+        }
+
+        function onDeviceReady() {
+            blackberry.app.event.onExit(onExitCallback);
+            setTimeout(function() { bbDataContent.checkSDCardContent(); }, 600);
+            bbSettings.init();
+			
+            //document.addEventListener("backbutton", navigationBack, false);
+			blackberry.system.event.onHardwareKey(blackberry.system.event.KEY_BACK, navigationBack);
+			buildMenu();
+            bindBackBtnNavigateBack();
+            bbDatabase.checkIfDbExists();
+        }
+
+        function showMainPage() {
+            $.mobile.changePage('#splash-screen-page');
+            bbmConnect();
+        }
+
+        function bbmConnect() 
+        {
+            if (bbmUtil.accessible == false) {
+                setTimeout(function () {
+                    bbmUtil.init();
+                }, 100);
+            }
+            else {
+                $('#btn-connect-to-bbm').css('visibility', 'hidden');
+            }
+        }
+
+        function updatePersonalMessage() 
+        {
+            userProfile.setPersonalMessage('Love SmartStudy App!!11');
+        }
+
+        function updateActivity(text)
+        {
+            blackberry.bbm.platform.self.profilebox.addItem({ text: text, icon: "local:///images/award.png" });
+        }
+
+        function playAudio(filename) 
+        {
+            //var src = "file:///SDCard/smartstudy/" + filename;
+            //alert(filename);
+            try {
+                //var media = new Audio("file:///SDCard/smartstudy/P206_MP3_0154.mp3");
+                var media = new Audio(filename);
+                media.load();
+                media.play();
+            } catch (e) {
+                alert(e);
+            }
+        }
+
+        function buildMenu() 
+        {
+            blackberry.ui.menu.clearMenuItems();
+            try {
+                // blackberry.ui.menu.MenuItem params:
+                // 1. isSeparator
+                // 2. value for sorting function
+                // 3. caption
+                // 4. callback
+                
+                blackberry.ui.menu.addMenuItem(new blackberry.ui.menu.MenuItem(false, 0, "Hide", hideApp));
+                blackberry.ui.menu.addMenuItem(new blackberry.ui.menu.MenuItem(true, 1));
+                blackberry.ui.menu.addMenuItem(new blackberry.ui.menu.MenuItem(false, 2, "About", showAboutMessage));
+                blackberry.ui.menu.addMenuItem(new blackberry.ui.menu.MenuItem(true, 3));
+            }
+            catch (e) 
+            {
+                alert("Can't create a menu");
+            }
+        }
+
+        function hideApp() {
+            blackberry.app.requestBackground();
+        }
+
+        function showAboutMessage() {
+            var ver = blackberry.app.version;
+            var name = blackberry.app.name;
+            //navigator.notification.alert(message, function () { }, 'Smart Study', 'OK');
+            blackberry.ui.dialog.standardAsk(blackberry.ui.dialog.D_OK, name + "\n\rVersion " + ver, 0, true);
+        }
+
+        function initGameCallback(questions)
+        {
+            // Start game
+            bbGame.initList(questions);
+            countDown();
+            CloseDialog();
+        }
+
+        function initMPGameCallback(questions)
+        {
+            // Start game
+            bbGame.initList(questions);
+            CloseDialog();
+            bbConnections.createConnection();
+        }
+
+        function initGame(event, isSubjGame, id, gamename) {
+            //hide MP header
+            $('.game-screen-header').css({ 'height': '30px' });
+            $('.game-content').css({ 'margin-top': '30px' });
+
+            //event.stopImmediatePropagation();
+
+            bbConnections.leaveGame();
+
+            bbGame.isTopicGame = !isSubjGame;
+            bbGame.topicSubjectId = id;
+            bbGame.gameName = gamename;
+
+            // Get questions list
+            bbDatabase.getQuestionsList(!isSubjGame, id, initGameCallback);
+        }
+
+        function CloseDialog() {
+            currentGameOwner = null;
+            $('.ui-simpledialog-container').remove();
+            $('.ui-simpledialog-screen').remove();
+            $('.ui-simpledialog-dialog').remove();
+        };
+
+        function initMPGame(event, isSubjGame, id) {
+            //show MP header
+            if (bbmUtil.accessible !== true) {
+                navigator.notification.alert('You need to connect the app to BBM to play with friends', 
+                    function () {
+//                        CloseDialog();
+                    }, 'Smart Study', 'OK');
+            }
+            else {
+
+                //event.stopImmediatePropagation();
+                $('#btn-start-mp-game').click(function () {
+                    startMPGame();
+                });
+
+                // Get questions list
+                bbDatabase.getQuestionsList(!isSubjGame, id, initMPGameCallback);
+            }
+        }
+
+        function startMPGame() {
+            bbConnections.sendGameStart();
+            countDown();
+        }
+
+        function bindBackBtnLeaveGame()
+        {
+            bbHandlers.backKeyDown = function() {
+                cancelMPGame();
+            };
+        }
+		
+		function bindBackBtnShowMainScreen() {
+			bbHandlers.backKeyDown = function () {
+				$('#splash-screen-page .ui-header').show();
+                $.mobile.changePage('#splash-screen-page');
+            };
+		}
+
+        function bindBackBtnNavigateBack() {
+			
+            bbHandlers.backKeyDown = function () {
+                // if menu was closed, prevent the go-back behavior
+                if (smst.ext.menuClose()) {
+					return;
+				}
+                if ($.mobile.activePage.attr("id") === "splash-screen-page") {
+                    // TODO (ftt): find out why active BBM connection apparently causes "previous instance still active" error
+                    //navigator.app.exitApp();
+                    //blackberry.app.requestBackground();
+                    blackberry.ui.dialog.standardAskAsync(
+                        "This will close the app.\n\rAre you sure?",
+                        blackberry.ui.dialog.D_YES_NO,
+                        function (selectedButtonIndex) {
+                            if (selectedButtonIndex == blackberry.ui.dialog.C_YES) {
+                                cleanUp();
+                                blackberry.app.exit();
+                            }
+                        },
+                        {
+                            title: "Leave App",
+                            size: blackberry.ui.dialog.SIZE_MEDIUM,
+                            position: blackberry.ui.dialog.CENTER
+                        }
+                    );
+                    
+                    return;
+                }
+                history.back();
+            };
+        } 
+
+        function bindBackBtnAskIfLeaveScores() {
+            bbHandlers.backKeyDown = function () {
+                blackberry.ui.dialog.standardAskAsync(
+                    "This will take you back to the Home screen. Are you sure?",
+                    blackberry.ui.dialog.D_YES_NO,
+                    function (selectedButtonIndex) {
+                        if (selectedButtonIndex == blackberry.ui.dialog.C_YES) {
+                            cancelMPGame();
+                            $.mobile.changePage("#splash-screen-page");
+                        }
+                    },
+                    {
+                        title: "Leave Detailed Results",
+                        size: blackberry.ui.dialog.SIZE_MEDIUM,
+                        position: blackberry.ui.dialog.CENTER
+                    }
+                );
+
+            }
+        }
+
+        function cancelMPGame() 
+        {
+            bindBackBtnNavigateBack();
+            bbGameLobby.cancel();
+            bbGame.cancel();
+        }
+
+        function drawMyChart(id, correct, wrong) {
+            //alert('Drawing chart: id=' + id + '; correct=' + correct + '; wrong=' + wrong);
+            if (!!document.createElement('canvas').getContext) { //check that the canvas element is supported
+                var colors = ['#2d97bc', '#d02024'];
+                var mychart = new AwesomeChart(id);
+                if (mychart != null) {
+                    mychart.data = [correct, wrong];
+                    mychart.colors = colors;
+                    mychart.chartType = 'doughnut';
+                    mychart.draw();
+                }
+            } else {
+                alert('The canvas element is not supported');
+            }
+        }
+
+        function chooseGame(o, id, isSubj, gamename) {
+            try {
+                currentGameOwner = o;
+                var aId = isSubj ? "subj-" + id : "topic-" + id;
+                var sId = "single-" + aId;
+                var mId = "multi-" + aId;
+                o.simpledialog('close');
+                o.simpledialog({
+                    'animate': false,
+                    'cleanOnClose': true,
+                    'mode': 'blank',
+                    'prompt': false,
+                    'headerClose': false,
+                    'forceInput': false,
+                    'useModal': true,
+                    'onClosed': function () {
+                        $('#splash-screen-page .ui-header').show();
+                    },
+                    'onOpened': function () {
+                        $('#splash-screen-page .ui-header').hide();
+                        $('.ui-simpledialog-screen').height(document.body.scrollHeight + "px");
+                    },
+                    'fullHTML':
+                        "<a  data-role='button' href='#' data-icon='singleP' id='" + sId + "' data-iconpos='top' class='singlePlayer' onclick='initGame(event, " + isSubj + ", \"" + id + "\", \"" + gamename + "\")'>Test me</a>" +
+                            "<a  data-role='button' href='#' data-icon='multiP'  id='" + mId + "' data-iconpos='top' class='multiPlayer' onclick='initMPGame(event, " + isSubj + ", \"" + id + "\")'>Test with friends </a>"
+                });
+                bbHandlers.backKeyDown = function() {
+                    o.simpledialog('close');
+                    bindBackBtnNavigateBack();
+                };
+
+            } catch(e) {
+                $('#splash-screen-page .ui-header').show();
+                alert('Cannot open dialog: ' + e.message);
+            }
+        }
+
+        function countDown()
+        {
+            bbHandlers.backKeyDown = function() {
+                bbGame.cancel();
+            };
+
+            bbGameLobby.isTimerRunning = false;
+            bbGame.countDown = true;
+
+            $.mobile.changePage("#countdown-page");
+
+            $("#count").css('background', "url(../images/count-down-3.png) center no-repeat");
+            setTimeout(function ()
+            {
+                $("#count").css('background', "url(../images/count-down-2.png) center no-repeat");
+                setTimeout(function ()
+                {
+                    $("#count").css('background', "url(../images/count-down-1.png) center no-repeat");
+                    setTimeout(function ()
+                    {
+                        $("#count").css('background', "url(../images/count-down-go.png) center no-repeat");
+                        setTimeout(function () { bbGame.start(); }, 1000);
+                    }, 1000);
+                }, 1000);
+            }, 1000);
+        };
+
+        function shareApp() {
+            blackberry.bbm.platform.users.inviteToDownload(function (result) {
+//                if (result == "limitreached") {
+//                    // Download invitation limit reached
+//                } else {
+//                    // User is finished inviting
+//                }
+            });
+        }
+
+        /*function showLoader(p) {
+            $.mobile.showPageLoadingMsg();
+            $('#splash-screen-page .ui-header').hide();
+            $('#search-page .ui-header').hide();
+            $('#search-page-G-L .ui-header').hide();
+            $('#search-page-M-S .ui-header').hide();
+            $('#search-page-T-Z .ui-header').hide();
+            switch (p) {
+                case 'A-F':
+                    setTimeout(function() {
+                        $.mobile.changePage('#search-page');
+                        $('#search-page .ui-header').show();
+                    }, 600);
+                    break;
+                case 'G-L':
+                    setTimeout(function () {
+                        $.mobile.changePage('#search-page-G-L');
+                        $('#search-page-G-L .ui-header').show();
+                    }, 600);
+                    break;
+                case 'M-S':
+                    setTimeout(function () {
+                        $.mobile.changePage('#search-page-M-S');
+                        $('#search-page-M-S .ui-header').show();
+                    }, 600);
+                    break;
+                case 'T-Z':
+                    setTimeout(function () {
+                        $.mobile.changePage('#search-page-T-Z');
+                        $('#search-page-T-Z .ui-header').show();
+                    }, 600);
+                    break;
+            }
+        }*/
+
+        function moreSmartStudyApps() {
+            var args = new blackberry.invoke.BrowserArguments('http://appworld.blackberry.com/webstore/search/smartstudy');
+            blackberry.invoke.invoke(blackberry.invoke.APP_BROWSER, args);
+        }
+    </script>
+</head>
+<body onload="onLoad()">
+
+    
+
+    <!--Main screen-->
+    <div data-role="page" id="splash-screen-page">
+
+        <div data-role="header" style="position:fixed; z-index:1000"> <!--data-position="fixed"-->
+			<a class="ui-btn-left header-search" data-icon="gear" id="A1" href="#search-page"></a>
+            <h1>Home</h1>
+            <!--<div style="float: left; width: 49%">
+                <div style="float: left; width: 49%">
+                    <a class="" data-role="button" data-theme="d" href="#search-page">A&nbsp;-&nbsp;F</a>
+                </div>
+                <div style="float: right; width: 49%">
+                    <a class="" data-role="button" data-theme="d" href="#search-page-G-L">G&nbsp;-&nbsp;L</a>                
+                </div>
+            </div>
+            <div style="float: right; width: 49%">
+                <div style="float: left; width: 49%">
+                    <a class="" data-role="button" data-theme="d" href="#search-page-M-S">M&nbsp;-&nbsp;S</a>
+                </div>
+                <div style="float: right; width: 49%">
+                    <a class="" data-role="button" data-theme="d" href="#search-page-T-Z">T&nbsp;-&nbsp;Z</a>                
+                </div>
+            </div>-->
+        </div>
+
+        <div data-role="content">
+            <div data-role="collapsible-set" data-theme="a" data-content-theme="d" id="categories-container">
+                <!--[#CONTENT]--><div data-role="collapsible" id="subject-375"><h3 data-colorScheme="color1">Naba Subject<div class="menu-tabs"><a href="#" id="subj-btn-375" data-role="button" class="menu-right-btn1 menu-right-btn-color1"></a><a href="#" id="subj-game-375" data-id="375" data-role="button" data-issubj="true" data-name="Naba Subject" class="menu-right-btn2 menu-right-btn-test menu-right-btn2-color1">Take<br/>Quiz</a></div></h3><div data-role="collapsible" class="menu-inner-collapsible"><h3>Water naba<div class="topic-btns"><a href="#" data-issubj="false" data-name="Water naba" data-id="AQA-C3-2012-Water_Naba" id="AQA-C3-2012-Water_Naba" data-role="button" class="topic-right-btn">Take<br/>Quiz</a></div></h3><ul data-role="listview" id="category-AQA-C3-2012-Water_Naba"><li><a href="#descr-page" onclick="bbDatabase.getDescr('0')">hard water</a></li><li><a href="#descr-page" onclick="bbDatabase.getDescr('1')">soft water</a></li></ul></div></div><!--[$CONTENT]-->
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <h4 style="padding-left: 40px;">Progress Overview</h4>
+                <div class="progress-overview-container" style="height: 90px;">
+                    <div id="progress-left-chart-container" class="pie-chart-small left" style="visibility: hidden;">
+                        <canvas id="progress-left-chart" class="pie-chart-small-canvas" width="60" height="70">
+                            Your web-browser does not support the HTML 5 canvas element.
+                        </canvas>
+                        <div class="pie-chart-small-percentage">
+                            <span id="progress-left"></span>
+                        </div>
+                        <div class="progress-overview-comment">% Read</div>
+                    </div>
+                    <div id="progress-right-chart-container" class="pie-chart-small right" style="visibility: hidden;">
+                        <canvas id="progress-right-chart" class="pie-chart-small-canvas" width="60" height="70">
+                        </canvas>
+                        <div class="pie-chart-small-percentage">
+                            <span id="progress-right"></span>
+                        </div>
+                        <div class="progress-overview-comment">% Correct</div>
+                    </div>
+                    <div id="progress-center-chart-container" class="pie-chart-small center" style="visibility: hidden;">
+                        <canvas id="progress-center-chart" class="pie-chart-small-canvas" width="60" height="70">
+                        </canvas>
+                        <div class="pie-chart-small-percentage">
+                            <span id="progress-center"></span>
+                        </div>
+                        <div class="progress-overview-comment">Last Test</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <!--<a class="black-button-norm" data-role="button" data-theme="b" href="#game-final-scores">Trololo</a>-->
+            <!--<a class="black-button-norm" data-role="button" data-theme="b" href="#game-lobby">Trololo</a>-->
+            <!--<a class="black-button-norm" data-role="button" data-theme="b" href="#content-download-page">Trololo</a>-->
+            
+            <a class="black-button-norm" data-role="button" data-theme="b" href="#" onclick="bbDatabase.showWordsToLearn();">Words to learn</a>
+            <a class="black-button-norm" data-role="button" data-theme="b" href="#my-stats-page">My Stats</a>
+            <a class="black-button-norm" data-role="button" data-theme="b" href="#" onclick="shareApp();">Share with friends</a>
+            <a class="black-button-norm more-apps" data-role="button" data-theme="b" href="#" onclick="moreSmartStudyApps();" data-icon="star" data-iconpos="right">More Apps</a>
+            <a data-role="button" class="black-button-norm" href="#" data-theme="b" onclick="bbmUtil.showBBMAppOptionsAndRegister()" id="btn-connect-to-bbm">Connect to BBM</a>
+        </div>
+    </div>
+
+    <div data-role="page" id="my-stats-page">
+        <div data-role="header">
+            <h1>My Stats</h1>
+        </div>
+        <div data-role="content">
+            <!--[#PROGRESSDIALS]--><div style="margin-bottom: 16px;">
+    <h4>Naba Subject</h4>
+    <div class="progress-overview-container" style="height: 90px;">
+        <div id="progress-left-chart-container-375" class="pie-chart-small left" style="visibility: hidden;">
+            <canvas id="progress-left-chart-375" class="pie-chart-small-canvas" width="60" height="70">
+                Your web-browser does not support the HTML 5 canvas element.
+            </canvas>
+            <div class="pie-chart-small-percentage">
+                <span id="progress-left-375"></span>
+            </div>
+            <div class="progress-overview-comment">% Read</div>
+        </div>
+        <div id="progress-right-chart-container-375" class="pie-chart-small right" style="visibility: hidden;">
+            <canvas id="progress-right-chart-375" class="pie-chart-small-canvas" width="60" height="70">
+            </canvas>
+            <div class="pie-chart-small-percentage">
+                <span id="progress-right-375"></span>
+            </div>
+            <div class="progress-overview-comment">% Correct</div>
+        </div>
+        <div id="progress-center-chart-container-375" class="pie-chart-small center" style="visibility: hidden;">
+            <canvas id="progress-center-chart-375" class="pie-chart-small-canvas" width="60" height="70">
+            </canvas>
+            <div class="pie-chart-small-percentage">
+                <span id="progress-center-375"></span>
+            </div>
+            <div class="progress-overview-comment">Last Quiz</div>
+        </div>
+    </div>
+</div><!--[$PROGRESSDIALS]-->
+        </div>
+    </div>
+    
+    <!--Content download page-->
+    <div data-role="page" id="content-download-page">
+        <div data-role="header">
+            <h1>Download Content</h1>
+        </div>
+        <div data-role="content">
+            <p id="download-message"> The app will now download photos and illustrations.
+                Please ensure you are connected to Wi-Fi. Please do not 
+                close the app while the download is progressing</p>
+            <div class="progressbar-container">
+                Progress
+                <div class="progressbar">
+                    <div id="download-progress">
+                    </div>
+                </div>
+            </div>
+			<div style="text-align: center;">
+				<img id="download-wait" src="images/loader.gif" alt="" style="display:none; margin-top:5px" />
+			</div>
+            <div id="download-started">Please wait&hellip;</div>
+        </div>
+    </div>
+    
+    <!--Search page-->
+    <div class="search-page" data-role="page" id="search-page">
+        <div data-role="header" style="position:fixed; z-index:1000">
+            <div style="float: left; width: 49%">
+                <div style="float: left; width: 49%">
+                    <a class="red" data-role="button" data-theme="d" href="">A&nbsp;-&nbsp;F</a>
+                </div>
+                <div style="float: right; width: 49%">
+                    <a class="" data-role="button" data-theme="d" href="#search-page-G-L">G&nbsp;-&nbsp;L</a>                
+                </div>
+            </div>
+            <div style="float: right; width: 49%">
+                <div style="float: left; width: 49%">
+                    <a class="" data-role="button" data-theme="d" href="#search-page-M-S">M&nbsp;-&nbsp;S</a>
+                </div>
+                <div style="float: right; width: 49%">
+                    <a class="" data-role="button" data-theme="d" href="#search-page-T-Z">T&nbsp;-&nbsp;Z</a>                
+                </div>
+            </div>
+        </div>
+        <!--Content-->
+        <div data-role="content" data-theme="d">
+            <ul data-role="listview">
+				<!--[#SEARCH1]--><!--[$SEARCH1]-->
+            </ul>
+        </div>
+    </div>
+    
+    <div class="search-page" data-role="page" id="search-page-G-L">
+        <div data-role="header" style="position:fixed; z-index:1000">
+            <div style="float: left; width: 49%">
+                <div style="float: left; width: 49%">
+                    <a class="" data-role="button" data-theme="d" href="#search-page">A&nbsp;-&nbsp;F</a>
+                </div>
+                <div style="float: right; width: 49%">
+                    <a class="red" data-role="button" data-theme="d" onclick="">G&nbsp;-&nbsp;L</a>                
+                </div>
+            </div>
+            <div style="float: right; width: 49%">
+                <div style="float: left; width: 49%">
+                    <a class="" data-role="button" data-theme="d" href="#search-page-M-S">M&nbsp;-&nbsp;S</a>
+                </div>
+                <div style="float: right; width: 49%">
+                    <a class="" data-role="button" data-theme="d" href="#search-page-T-Z">T&nbsp;-&nbsp;Z</a>                
+                </div>
+            </div>
+        </div>
+        <!--Content-->
+        <div data-role="content" data-theme="d">
+            <ul data-role="listview">
+			<!--[#SEARCH2]--><li><a href="#descr-page" onclick="bbDatabase.getDescr('0')">hard water</a></li><!--[$SEARCH2]-->
+            </ul>
+        </div>
+    </div>
+    
+    <div class="search-page" data-role="page" id="search-page-M-S">
+        <div data-role="header" style="position:fixed; z-index:1000">
+            <div style="float: left; width: 49%">
+                <div style="float: left; width: 49%">
+                    <a class="" data-role="button" data-theme="d" href="#search-page">A&nbsp;-&nbsp;F</a>
+                </div>
+                <div style="float: right; width: 49%">
+                    <a class="" data-role="button" data-theme="d" href="#search-page-G-L">G&nbsp;-&nbsp;L</a>                
+                </div>
+            </div>
+            <div style="float: right; width: 49%">
+                <div style="float: left; width: 49%">
+                    <a class="red" data-role="button" data-theme="d" onclick="">M&nbsp;-&nbsp;S</a>
+                </div>
+                <div style="float: right; width: 49%">
+                    <a class="" data-role="button" data-theme="d" href="#search-page-T-Z">T&nbsp;-&nbsp;Z</a>                
+                </div>
+            </div>
+        </div>
+        <!--Content-->
+        <div data-role="content" data-theme="d">
+            <ul data-role="listview">
+			<!--[#SEARCH3]--><li><a href="#descr-page" onclick="bbDatabase.getDescr('1')">soft water</a></li><!--[$SEARCH3]-->
+            </ul>
+        </div>
+    </div>
+    
+    <div class="search-page" data-role="page" id="search-page-T-Z">
+        <div data-role="header" style="position:fixed; z-index:1000">
+            <div style="float: left; width: 49%">
+                <div style="float: left; width: 49%">
+                    <a class="" data-role="button" data-theme="d" href="#search-page">A&nbsp;-&nbsp;F</a>
+                </div>
+                <div style="float: right; width: 49%">
+                    <a class="" data-role="button" data-theme="d" href="#search-page-G-L">G&nbsp;-&nbsp;L</a>                
+                </div>
+            </div>
+            <div style="float: right; width: 49%">
+                <div style="float: left; width: 49%">
+                    <a class="" data-role="button" data-theme="d" href="#search-page-M-S">M&nbsp;-&nbsp;S</a>
+                </div>
+                <div style="float: right; width: 49%">
+                    <a class="red" data-role="button" data-theme="d" onclick="">T&nbsp;-&nbsp;Z</a>                
+                </div>
+            </div>
+        </div>
+        <!--Content-->
+        <div data-role="content" data-theme="d">
+            <ul data-role="listview">
+			<!--[#SEARCH4]--><!--[$SEARCH4]-->
+            </ul>
+        </div>
+    </div>
+    
+    <!--Countdown page-->
+    <div data-role="page" id="countdown-page">
+        <div data-role="header">
+            <h1>GET READY...</h1>
+        </div>
+        <!--Content-->
+        <div data-role="content" data-theme="b">
+            <div id="count"></div>
+        </div>
+    </div>
+
+    <!--Share screen-->
+    <!--<div data-role="page" id="share-screen-page">
+        <div data-role="content">
+            <a data-role="button" data-theme="b" href="#" onclick="updatePersonalMessage()">Update Personal Message (BBM)</a>
+                <input type="text" value="type here" id="profile-item-text">
+            <a data-role="button" data-theme="b" href="#" onclick="bbmUtil.inviteToDownload()">Share App (BBM)</a>
+            <a data-role="button" data-theme="a" href="#facebook-share-page">Like! (broken)</a>
+        </div>
+    </div>-->
+
+    <!--Blackberry Connect Failed / Reconnect-->
+    <div data-role="page" id="bbm-connect-failed">
+        <div data-role="content">
+            <div id="bbm-connect-failed-msg"></div>
+            <br/>
+            <a data-role="button" data-theme="a" href="#" id="bbm-connect-failed-btn-reconnect" onclick="bbmUtil.showBBMAppOptionsAndRegister()">Connect to BBM</a>
+            <a data-role="button" data-theme="a" href="#splash-screen-page">Cancel</a>
+        </div>
+    </div>
+
+    <!--Facebook share screen-->
+    <!--<div data-role="page" id="facebook-share-page">
+        <div data-role="content">
+            <label for="facebook-share-comment">Comment:</label>
+            <textarea name="textarea" id="facebook-share-comment">Nice app!</textarea>
+            <a data-role="button" href="#splash-screen-page" onclick="someFacebookStuff()">
+                Share
+            </a>
+        </div>
+    </div>-->
+    
+    <!--Description page-->
+    <div data-role="page" id="descr-page" data-theme="b" data-content-theme="b">
+        <div data-role="header" style="position:fixed"> <!-- data-position="fixed" -->
+            <div class="descr-page-prev"><a type="image" id="descr-prev-term" href="#"></a></div>
+            <div class="descr-page-next"><a type="image" id="descr-next-term" href="#"></a></div>
+            <div class="ui-title" id="descr-page-header">Home</div>
+        </div>
+        <div data-role="content" class="desc-inner">
+            <div id="descr-page-btns-container" style="overflow: hidden;">
+                <div class="item-name"></div>
+                <div data-role="controlgroup" data-type="horizontal" class="desc-btns">
+                    <a class="desc-btn-audio" href="#"              id="btn-play" type="image"></a>
+                    <a class="desc-btn-pic" href="#illustr-page"    id="btn-picture" type="image"></a>
+                    <a class="desc-btn-ill" href="#illustr-page"    id="btn-illustr" type="image"></a>
+                </div>
+            </div>
+            <div id="item-descr">
+                <span id="item-descr-value"></span>
+            </div>
+        </div>
+    </div>
+
+    <!--Illustration page-->
+    <div data-role="page" id="illustr-page" data-theme="b" data-content-theme="b">
+        <div id="panview-div"></div>
+    </div>
+
+    <!--Game main screen-->
+    <div data-role="page" id="game-main-screen-page">
+        <div data-role="header" class="game-screen-header" style="position:fixed;" > <!--data-position="fixed"-->
+            <div id="game-mp-left" class="left">
+                <div id="game-type" style="visibility: hidden">MP</div>
+                <div id="game-leader-name"></div>
+            </div>
+            <div class="right">
+                Score: <span id="game-score" data-name="game-score"></span>
+                <span id="game-leader-score"></span>
+            </div>
+            <div id="game-mp-center" class="center">
+                Question: <span id="game-question-index"></span>
+                <br />
+                <span id="game-leader-qn"></span>
+            </div>
+        </div>
+        <div data-role="content" class="game-content">
+            <div class="test">
+                <div id="div-question" style="margin-bottom: 5px;">
+                    Question text...
+                </div>
+                <a data-role="button" href="#" data-theme="b" id="btn-first"></a>
+                <a data-role="button" href="#" data-theme="b" id="btn-second"></a>
+                <a data-role="button" href="#" data-theme="b" id="btn-third"></a>
+                <!--<a data-role="button" href="#" data-theme="b" id="btn-skip">Skip?</a>-->
+            </div>
+        </div>
+        <div data-role="footer" style="position:fixed; bottom:0px"> <!--data-position="fixed"--> 
+            <div id="game-time-bar">
+                <div class="game-time-bar"></div>
+                <!--<span id="game-time-bar-red"><span></span></span>-->
+                <!--<span id="game-time-bar-yellow"><span></span></span>-->
+                <!--<span id="game-time-bar-green"><span></span></span>-->
+            </div>
+        </div> 
+    </div>
+
+    <!--Game score screen-->
+    <div data-role="page" id="game-score-screen">
+        <div data-role="header">
+            <h1>Your Results</h1>
+        </div>
+        <div data-role="content">
+            <div class="result-inner">
+                <div>
+                    <div class="pie-chart-big">
+                        <canvas id="chart-game-result" class="pie-chart-canvas" width="110" height="120">
+                            Your web-browser does not support the HTML 5 canvas element.
+                        </canvas>
+                        <div class="pie-chart-big-percentage">
+                            <span data-name="game-score"></span>
+                        </div>
+                    </div>
+                </div>
+                <a data-role="button" data-theme="a" href="#game-wrong-words" onclick="bbGame.initWrongWordsScreen();">View Detailed Results</a>
+                <a data-role="button" data-theme="a" href="#splash-screen-page">Home</a>
+            </div>
+        </div>
+    </div>
+
+    <!--Multiplayer Game score/waiting screen-->
+    <div data-role="page" id="game-score-screen-mp">
+        <div data-role="header">
+            <h1>YOUR RESULTS</h1>
+        </div>
+        <div data-role="content">
+            <div class="shadow-container">
+                <h3>
+                    YOU SCORED:
+                    <br/>
+                    <span data-name="game-score"></span>
+                </h3>
+                <h2>Awaiting other results...</h2>
+            </div>
+        </div>
+    </div>
+
+    <!--Multiplayer Game Score screen-->
+    <div data-role="page" id="game-final-scores">
+        <div data-role="header">
+            <h1>MULTIPLAYER RESULTS</h1>
+        </div>
+        <div data-role="content">   
+            <ul class="sunk-container" data-role="listview" data-theme="d" id="mp-final-scores">
+                <!--<li class="li-gray-bottom">
+                    <a href="">
+                        <img onLoad="lobbyAvatarLoaded(this)" src="images/avatar.png" class="ui-li-thumb" alt=""/>
+                        <div class="game-place"><div>1</div><div class="game-place-abc">st</div></div>
+                        <div class="game-results-name green">Ololosha Trololoev-loloev</div>
+                        <div class="game-results-score green">950</div>
+                    </a>
+                </li>-->
+                <!--<li class="">
+                    <a href="">
+                        <img onLoad="lobbyAvatarLoaded(this)" src="images/avatar_sample.png" class="ui-li-thumb" alt=""/>
+                        <div class="game-place"><div>3</div><div class="game-place-abc">nd</div></div>
+                        <div class="game-results-name yellow">Olol Trol</div>
+                        <div class="game-results-score yellow">40</div>
+                    </a>
+                </li>-->
+            </ul>
+        </div>
+    </div>
+
+    <!--Game wrong words screen-->
+    <div data-role="page" id="game-wrong-words">
+        <div data-role="header">
+            <!--<h1>Scores: <span data-name="game-score"></span> Right</h1>-->
+            <h1>My Answers:</h1>
+        </div>        
+        <div data-role="content">
+            <div class="ui-body-d game-wrong">
+                <span id="game-wrong-words-header">
+                    WRONG ANSWERS:
+                </span>
+                <div class="game-wrong-list-container" style="margin-bottom: 15px;">
+                    <ul data-role="listview" id="game-wrong-words-list"></ul>
+                </div>
+
+                <span id="game-correct-words-header">
+                    CORRECT ANSWERS:
+                </span>
+                <div class="game-correct-list-container">
+                    <ul data-role="listview" id="game-correct-words-list"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Blackberry GAME LOBBY screen-->
+    <div data-role="page" id="game-lobby" data-theme="b" data-content-theme="b">
+        <div data-role="header" style="height: 30px;">
+            <div class="center">
+                MULTIPLAYER GAME LOBBY
+            </div>
+        </div>
+        <div data-role="content">
+            <div style="height: 20px;">
+                <div class="lobby-timer">
+                    Time left: <span id="game-lobby-timer">30</span>
+                </div>
+            </div>
+            <ul class="sunk-container" data-role="listview" data-theme="d" id="game-lobby-players">
+                <!--<li class="li-gray-bottom red">
+                    <a href="" class="green">
+                        <img src="images/avatar.png" class="ui-li-thumb" alt=""/>
+                        <h3>Ololosha</h3>
+                        HOST
+                    </a>
+                </li>-->
+                <!--<li class="">
+                    <a href="" class="red">
+                        <img src="images/avatar_sample.png" class="ui-li-thumb" alt=""/>
+                        <h3>Jon McWee</h3>
+                        WJHER EKWJRKEWJ
+                    </a>
+                </li>-->
+            </ul>
+            <div id="lobby-btns-container">
+                <a data-role="button" data-theme="a" href="#" id="btn-start-mp-game">START TEST</a>
+                <a data-role="button" data-theme="a" href="#" id="btn-cancel-mp-game" onclick="cancelMPGame();">CANCEL</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

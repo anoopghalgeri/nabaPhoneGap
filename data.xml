@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfSubject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Subject>
+    <Id>375</Id>
+    <Name>Naba Subject</Name>
+    <DataSize>0</DataSize>
+    <Topics>
+      <Topic>
+        <Name>Water naba</Name>
+        <Code>AQA-C3-2012-Water_Naba</Code>
+        <Terms>
+          <Term>
+            <Id>0</Id>
+            <Name>hard water</Name>
+            <Definition>Water which contains dissolved calcium and magnesium ions.</Definition>
+            <PictureId>C306_PIC_0020.jpg</PictureId>
+            <IllustrationId>C306_ILL_0001.png</IllustrationId>
+            <QuestionNumber>27</QuestionNumber>
+            <Question>Water which contains dissolved calcium and magnesium ions, which react with in hot water systems ?</Question>
+            <WrongAnswer1>soft water</WrongAnswer1>
+            <WrongAnswer2>carbonated water</WrongAnswer2>
+            <CorrectAnswer>hard water</CorrectAnswer>
+            <IsFreeForTrial>true</IsFreeForTrial>
+          </Term>
+          <Term>
+            <Id>1</Id>
+            <Name>soft water</Name>
+            <Definition>Water which does not contain dissolved substances that produce scale.</Definition>
+            <QuestionNumber>28</QuestionNumber>
+            <Question>Water which does not contain dissolved substances that produce scum and scale ?</Question>
+            <WrongAnswer1>hard water</WrongAnswer1>
+            <WrongAnswer2>carbonated water</WrongAnswer2>
+            <CorrectAnswer>soft water</CorrectAnswer>
+            <IsFreeForTrial>true</IsFreeForTrial>
+          </Term>
+        </Terms>
+      </Topic>
+    </Topics>
+    <ColorSchemeId>1</ColorSchemeId>
+  </Subject>
+</ArrayOfSubject>
